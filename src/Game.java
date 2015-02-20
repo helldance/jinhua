@@ -37,28 +37,14 @@ public class Game {
             cardsWeight[i] = i + 1;
         }
 
-        for (int k = 1; k <= 10; k++) {
-            cards.add(new Card(CardType.HEART, k));
-        }
-
-        for (int k = 1; k <= 10; k++) {
-            cards.add(new Card(CardType.DIAMOND, k));
-        }
-
-        for (int k = 1; k <= 10; k++) {
-            cards.add(new Card(CardType.SPADE, k));
-        }
-
-        for (int k = 1; k <= 10; k++) {
-            cards.add(new Card(CardType.CLUB, k));
+        for (int m = 0; m < 4; m++) {
+            for (int n = 0; n < 10; n++) {
+                cards.add(new Card(cardType[m], n));
+            }
         }
     }
 
     public static void main(String[] args) {
-        System.out.println(cards.size());
-
-        Iterator<?> iterator = cards.iterator();
-
         // distribute cards
         for (Player p : players) {
             while (p.cards.size() < maxCardsPerPerson) {
@@ -68,13 +54,24 @@ public class Game {
 
         System.out.println("Cards distribute complete..");
 
+        int max = 0;
+        Player winPlayer = null;
+
         for (Player p : players) {
-            System.out.print(p.printCards());
-            p.calcMaxRemain();
+            System.out.print("\n" + p.nickName + ":\n" + p.printCards());
+
+            int tempMax = p.calcMaxRemain();
+
+            if (tempMax > max) {
+                max = tempMax;
+                winPlayer = p;
+            }
+
+            System.out.println(p.nickName + " " + max);
         }
 
-        // compare cards
-
+        System.out.println("****** Player ******\n" + winPlayer.nickName + " wins with remaining "
+                           + max);
     }
 
     public void reset() {
@@ -124,14 +121,14 @@ public class Game {
                             sum = sum > 10 ? sum % 10 : sum;
 
                             if (sum > curSum) {
-                                curSum = sum;
+                                points = curSum = sum;
                             }
 
                             // print best cards permutation
-                            System.out.println(i + ", " + j + ", " + k + " : " + cards.get(i).value + ", "
-                                               + cards.get(j).value + ", " + cards.get(k).value + " = " + curSum);
-                        }
-                        else {
+                            System.out.println(i + ", " + j + ", " + k + " : " + cards.get(i).value
+                                               + ", " + cards.get(j).value + ", "
+                                               + cards.get(k).value + " = " + curSum);
+                        } else {
                             totalWeight = 0;
                         }
                     }
@@ -169,6 +166,7 @@ public class Game {
             return new Card(cardType[cardSeq], cardsWeight[weightSeq]);
         }
 
+        @Override
         public String toString() {
             return type + " " + value;
         }
